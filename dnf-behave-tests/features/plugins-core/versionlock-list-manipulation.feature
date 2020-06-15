@@ -142,3 +142,16 @@ Scenario: versionlock will print just necessary information with -q option
     """
     wget-0:1.19.5-5.fc29.*
     """
+
+
+@bz1845270
+Scenario: Versionlock does not add duplicates to versionlock.list
+  Given I use repository "dnf-ci-fedora"
+    And I execute dnf with args "versionlock add wget"
+   When I execute dnf with args "versionlock add wget"
+   Then the exit code is 0
+   When I execute "cat {context.dnf.installroot}/etc/dnf/plugins/versionlock.list | grep wget"
+   Then stdout is
+    """
+    wget-0:1.19.5-5.fc29.*
+    """
